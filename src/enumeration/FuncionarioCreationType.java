@@ -7,11 +7,11 @@ import java.util.Arrays;
 import java.util.function.Function;
 
 public enum FuncionarioCreationType {
-    ESTAGIARIO("1", Estagiario::new),
-    ASSITENTE("2", Assistente::new),
-    COORDENADOR("3", Coordenador::new),
-    ANALISTA("4", Analista::new),
-    GERENTE("5", Gerente::new);
+    ESTAGIARIOOBJ("1", Estagiario::new),
+    ASSISTENTEOBJ("2", Assistente::new),
+    COORDENADOROBJ("3", Coordenador::new),
+    ANALISTAOBJ("4", Analista::new),
+    GERENTEOBJ("5", Gerente::new);
 
     private final String option;
     private final Function<String, Funcionario> creator;

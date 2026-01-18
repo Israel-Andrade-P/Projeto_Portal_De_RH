@@ -9,6 +9,7 @@ import repository.FuncionarioRepository;
 import java.time.Clock;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Set;
 
 public class FuncionarioService {
     private final FuncionarioRepository repository;
@@ -40,11 +41,19 @@ public class FuncionarioService {
         funcionario.addRegistro(registro);
     }
 
+    public FuncionarioRegistravel getRegistroHoras(String id) {
+        var func = repository.findById(id);
+        return isRegistrable(func);
+    }
+
     private FuncionarioRegistravel validateRegistroHora(RegistroHora registro, String id) {
         LocalDate hojeSP = LocalDate.now(clock);
         if (registro.getDia().isBefore(hojeSP)) throw new IllegalArgumentException("Não é possível registrar dias do passado");
         if (!registro.getHoraEntrada().isBefore(registro.getHoraSaida())) throw new IllegalArgumentException("Hora de Entrada deve ser antes da Hora de Saída");
         Funcionario funcionario = repository.findById(id);
+        return isRegistrable(funcionario);
+    }
+    private FuncionarioRegistravel isRegistrable(Funcionario funcionario) {
         if (!(funcionario instanceof FuncionarioRegistravel registravel)) throw new FuncionarioNaoRegistravelException("Funcionário não bate ponto!");
         return registravel;
     }

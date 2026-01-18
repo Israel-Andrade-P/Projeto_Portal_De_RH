@@ -1,13 +1,16 @@
 package common;
 
+import enumeration.Cargo;
 import util.FuncionarioUtils;
 
 public abstract class Funcionario {
-    private String id;
-    private String name;
+    private final String id;
+    private final String name;
+    private final Cargo cargo;
 
-    public Funcionario(String name) {
+    public Funcionario(String name, Cargo cargo) {
         this.name = name;
+        this.cargo = cargo;
         id = FuncionarioUtils.generateId();
     }
 
@@ -17,5 +20,13 @@ public abstract class Funcionario {
 
     public String getName() {
         return name;
+    }
+
+    public Cargo getCargo() {
+        return cargo;
+    }
+
+    public void displayInfo() {
+        System.out.printf("ID: %s\nNome: %s\nCargo: %s\n", this.getId(), this.getName(), this.getCargo().getLabel());
     }
 }

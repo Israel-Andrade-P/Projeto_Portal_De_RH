@@ -1,5 +1,6 @@
 package common;
 
+import enumeration.Cargo;
 import model.RegistroHora;
 
 import java.util.HashSet;
@@ -8,8 +9,8 @@ import java.util.Set;
 public abstract class FuncionarioRegistravel extends Funcionario implements Registravel{
     private Set<RegistroHora> horas = new HashSet<>();
 
-    public FuncionarioRegistravel(String name) {
-        super(name);
+    public FuncionarioRegistravel(String name, Cargo cargo) {
+        super(name, cargo);
     }
 
     public Set<RegistroHora> getRegistroHoras() {
