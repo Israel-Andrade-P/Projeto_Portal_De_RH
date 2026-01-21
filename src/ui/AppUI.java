@@ -2,6 +2,7 @@ package ui;
 
 import common.Funcionario;
 import exception.FuncionarioNaoRegistravelException;
+import exception.FuncionarioNotFoundException;
 import factory.FuncionarioFactory;
 import model.RegistroHora;
 import repository.FuncionarioRepository;
@@ -11,8 +12,11 @@ import java.time.Clock;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.ZoneId;
-import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.Scanner;
+
+import static util.DateUtils.DATE_FORMATTER;
+import static util.DateUtils.TIME_FORMATTER;
 
 public class AppUI {
     private static Scanner sc = new Scanner(System.in);
@@ -60,31 +64,29 @@ public class AppUI {
             System.out.print("ID do funcionário: ");
             String id = sc.nextLine().trim();
 
+            service.isRegistrable(service.getById(id));
+
             System.out.print("Dia (dd/MM/yyyy): ");
             String diaInput = sc.nextLine().trim();
+            var dia = LocalDate.parse(diaInput, DATE_FORMATTER);
 
             System.out.print("Hora de entrada (HH:mm): ");
             String entradaInput = sc.nextLine().trim();
+            var entrada = LocalTime.parse(entradaInput, TIME_FORMATTER);
 
             System.out.print("Hora de saída (HH:mm): ");
             String saidaInput = sc.nextLine().trim();
+            var saida = LocalTime.parse(saidaInput, TIME_FORMATTER);
 
-            DateTimeFormatter dateFormatter =
-                    DateTimeFormatter.ofPattern("dd/MM/yyyy");
-            DateTimeFormatter timeFormatter =
-                    DateTimeFormatter.ofPattern("HH:mm");
-
-            RegistroHora registro = new RegistroHora(
-                    LocalDate.parse(diaInput, dateFormatter),
-                    LocalTime.parse(entradaInput, timeFormatter),
-                    LocalTime.parse(saidaInput, timeFormatter)
-            );
+            RegistroHora registro = new RegistroHora(dia, entrada, saida);
 
             service.addRegistroHora(registro, id);
             System.out.println("Período registrado com sucesso!");
 
-        } catch (IllegalArgumentException | FuncionarioNaoRegistravelException e) {
+        } catch (IllegalArgumentException | FuncionarioNaoRegistravelException |FuncionarioNotFoundException e) {
             System.out.println("ERRO: " + e.getMessage());
+        }catch (DateTimeParseException e) {
+            System.out.println("Formato de data ou hora incorreto");
         }
     }
 

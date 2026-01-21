@@ -8,8 +8,11 @@ import repository.FuncionarioRepository;
 
 import java.time.Clock;
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.List;
-import java.util.Set;
+
+import static util.DateUtils.HORA_MAXIMA_SAIDA;
+import static util.DateUtils.HORA_MINIMA_ENTRADA;
 
 public class FuncionarioService {
     private final FuncionarioRepository repository;
@@ -37,24 +40,26 @@ public class FuncionarioService {
     }
 
     public void addRegistroHora(RegistroHora registro, String id) {
-        FuncionarioRegistravel funcionario = validateRegistroHora(registro, id);
-        funcionario.addRegistro(registro);
+        Funcionario funcionario = getById(id);
+        isRegistrable(funcionario);
+        validateRegistroHora(registro);
+        ((FuncionarioRegistravel) funcionario).addRegistro(registro);
     }
 
     public FuncionarioRegistravel getRegistroHoras(String id) {
-        var func = repository.findById(id);
-        return isRegistrable(func);
+        Funcionario funcionario = getById(id);
+        isRegistrable(funcionario);
+        return  (FuncionarioRegistravel) funcionario;
     }
 
-    private FuncionarioRegistravel validateRegistroHora(RegistroHora registro, String id) {
+    private void validateRegistroHora(RegistroHora registro) {
         LocalDate hojeSP = LocalDate.now(clock);
         if (registro.getDia().isBefore(hojeSP)) throw new IllegalArgumentException("Não é possível registrar dias do passado");
+        if (registro.getHoraEntrada().isBefore(HORA_MINIMA_ENTRADA)) throw new IllegalArgumentException("Hora de Entrada não pode ser antes das 06:00");
         if (!registro.getHoraEntrada().isBefore(registro.getHoraSaida())) throw new IllegalArgumentException("Hora de Entrada deve ser antes da Hora de Saída");
-        Funcionario funcionario = repository.findById(id);
-        return isRegistrable(funcionario);
+        if (registro.getHoraSaida().isAfter(HORA_MAXIMA_SAIDA)) throw new IllegalArgumentException("Hora de Saída não pode ser depois das 22:00");
     }
-    private FuncionarioRegistravel isRegistrable(Funcionario funcionario) {
-        if (!(funcionario instanceof FuncionarioRegistravel registravel)) throw new FuncionarioNaoRegistravelException("Funcionário não bate ponto!");
-        return registravel;
+    public void isRegistrable(Funcionario funcionario) {
+        if (!(funcionario instanceof FuncionarioRegistravel)) throw new FuncionarioNaoRegistravelException("Funcionário não bate ponto!");
     }
 }

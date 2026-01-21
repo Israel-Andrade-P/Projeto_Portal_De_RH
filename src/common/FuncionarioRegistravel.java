@@ -6,6 +6,9 @@ import model.RegistroHora;
 import java.util.HashSet;
 import java.util.Set;
 
+import static util.DateUtils.DATE_FORMATTER;
+import static util.DateUtils.TIME_FORMATTER;
+
 public abstract class FuncionarioRegistravel extends Funcionario implements Registravel{
     private Set<RegistroHora> horas = new HashSet<>();
 
@@ -31,9 +34,9 @@ public abstract class FuncionarioRegistravel extends Funcionario implements Regi
     public void displayRegistros() {
         horas.forEach(registro -> {
             System.out.printf("Dia: %s\nEntrada: %s\nSaída: %s\n",
-                    registro.getDia(),
-                    registro.getHoraEntrada(),
-                    registro.getHoraSaida());
+                    registro.getDia().format(DATE_FORMATTER),
+                    registro.getHoraEntrada().format(TIME_FORMATTER),
+                    registro.getHoraSaida().format(TIME_FORMATTER));
         });
     }
 }
