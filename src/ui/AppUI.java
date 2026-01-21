@@ -15,8 +15,8 @@ import java.time.ZoneId;
 import java.time.format.DateTimeParseException;
 import java.util.Scanner;
 
-import static util.DateUtils.DATE_FORMATTER;
-import static util.DateUtils.TIME_FORMATTER;
+import static constant.Constants.DATE_FORMATTER;
+import static constant.Constants.TIME_FORMATTER;
 
 public class AppUI {
     private static Scanner sc = new Scanner(System.in);
@@ -31,6 +31,7 @@ public class AppUI {
             System.out.println("2 - Registrar período de trabalho");
             System.out.println("3 - Listar funcionários");
             System.out.println("4 - Listar horas de trabalho registradas");
+            System.out.println("5 - Remover funcionário");
             System.out.println("0 - Sair");
 
             String choice = sc.nextLine().trim();
@@ -40,6 +41,7 @@ public class AppUI {
                 case "2" -> addWorkHours();
                 case "3" -> listAll();
                 case "4" -> listRegistroHoras();
+                case "5" -> removeFuncionario();
                 case "0" -> {
                     System.out.println("Encerrando sistema...");
                     return;
@@ -49,10 +51,25 @@ public class AppUI {
         }
     }
 
+    private static void removeFuncionario() {
+        System.out.print("ID do funcionário: ");
+        String id = sc.nextLine().trim();
+        try {
+            service.delete(id);
+            System.out.println("Funcionário removido com sucesso!");
+        }catch (FuncionarioNotFoundException e) {
+            System.out.println("ERRO: " + e.getMessage());
+        }
+    }
+
     private static void listRegistroHoras() {
         System.out.print("ID do funcionário: ");
         String id = sc.nextLine().trim();
-        service.getRegistroHoras(id).displayRegistros();
+        try {
+            service.getRegistroHoras(id).displayRegistros();
+        }catch (FuncionarioNotFoundException e) {
+            System.out.println("ERRO: " + e.getMessage());
+        }
     }
 
     private static void listAll() {
